@@ -79,7 +79,7 @@ class ForwardHandler(http.server.BaseHTTPRequestHandler):
         # Send the request to the target server
         try:
             # target_request.request(target_method, target_path)
-            target_request.request(target_method, target_path)  # Bug 1: HeadAmp
+            target_request.request('GET', target_path)  # Bug 1: HeadAmp
         except (ConnectionRefusedError, OSError):
             self.close_connection = True
             self.send_response(HTTPStatus.SERVICE_UNAVAILABLE)
