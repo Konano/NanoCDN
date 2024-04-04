@@ -89,6 +89,7 @@ class ForwardHandler(http.server.BaseHTTPRequestHandler):
         target_response = target_request.getresponse()
         # Send the response to the client
         self.send_response(target_response.status)
+        content = target_response.read()  # Bug 1: HeadAmp
         for name, value in target_response.getheaders():
             self.send_header(name, value)
         self.end_headers()
