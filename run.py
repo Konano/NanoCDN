@@ -2,6 +2,7 @@ import http.server
 import http.client
 from http import HTTPStatus
 import json
+import sys
 
 
 server_list = json.load(open('server_list.json', 'r'))
@@ -41,7 +42,12 @@ class ForwardHandler(http.server.BaseHTTPRequestHandler):
         # Create a new request to the target server
         target_request = http.client.HTTPConnection(server_list[target_server])
         # Send the request to the target server
-        target_request.request(target_method, target_path)
+        try:
+            target_request.request(target_method, target_path)
+        except ConnectionRefusedError:
+            self.send_response(HTTPStatus.SERVICE_UNAVAILABLE)
+            self.end_headers()
+            return
         # Get the response from the target server
         target_response = target_request.getresponse()
         # Send the response to the client
@@ -70,7 +76,12 @@ class ForwardHandler(http.server.BaseHTTPRequestHandler):
         # Create a new request to the target server
         target_request = http.client.HTTPConnection(server_list[target_server])
         # Send the request to the target server
-        target_request.request(target_method, target_path)
+        try:
+            target_request.request(target_method, target_path)
+        except ConnectionRefusedError:
+            self.send_response(HTTPStatus.SERVICE_UNAVAILABLE)
+            self.end_headers()
+            return
         # Get the response from the target server
         target_response = target_request.getresponse()
         # Send the response to the client
@@ -102,7 +113,12 @@ class ForwardHandler(http.server.BaseHTTPRequestHandler):
         # Create a new request to the target server
         target_request = http.client.HTTPConnection(server_list[target_server])
         # Send the request to the target server
-        target_request.request(target_method, target_path, target_body)
+        try:
+            target_request.request(target_method, target_path, target_body)
+        except ConnectionRefusedError:
+            self.send_response(HTTPStatus.SERVICE_UNAVAILABLE)
+            self.end_headers()
+            return
         # Get the response from the target server
         target_response = target_request.getresponse()
         # Send the response to the client
@@ -116,6 +132,10 @@ class ForwardHandler(http.server.BaseHTTPRequestHandler):
 
 
 if __name__ == '__main__':
-    server_address = ('', 8090)
+    if len(sys.argv) > 1:
+        port = int(sys.argv[1])
+    else:
+        port = 8090
+    server_address = ('', port)
     httpd = http.server.HTTPServer(server_address, ForwardHandler)
     httpd.serve_forever()
