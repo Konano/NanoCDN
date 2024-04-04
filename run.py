@@ -141,5 +141,6 @@ if __name__ == '__main__':
     else:
         port = 8090
     server_address = ('', port)
-    httpd = http.server.HTTPServer(server_address, ForwardHandler)
+    httpd = http.server.ThreadingHTTPServer(server_address, ForwardHandler)
+    print('Starting server, listen at: %s:%s' % server_address)
     httpd.serve_forever()
