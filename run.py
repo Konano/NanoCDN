@@ -44,7 +44,7 @@ class ForwardHandler(http.server.BaseHTTPRequestHandler):
         # Send the request to the target server
         try:
             target_request.request(target_method, target_path)
-        except ConnectionRefusedError:
+        except (ConnectionRefusedError, OSError):
             self.send_response(HTTPStatus.SERVICE_UNAVAILABLE)
             self.end_headers()
             return
@@ -78,7 +78,7 @@ class ForwardHandler(http.server.BaseHTTPRequestHandler):
         # Send the request to the target server
         try:
             target_request.request(target_method, target_path)
-        except ConnectionRefusedError:
+        except (ConnectionRefusedError, OSError):
             self.send_response(HTTPStatus.SERVICE_UNAVAILABLE)
             self.end_headers()
             return
@@ -115,7 +115,7 @@ class ForwardHandler(http.server.BaseHTTPRequestHandler):
         # Send the request to the target server
         try:
             target_request.request(target_method, target_path, target_body)
-        except ConnectionRefusedError:
+        except (ConnectionRefusedError, OSError):
             self.send_response(HTTPStatus.SERVICE_UNAVAILABLE)
             self.end_headers()
             return
